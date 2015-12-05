@@ -1,26 +1,34 @@
+#include <math.h>
 #include <array>
 #include <vector>
 #include <algorithm>
 #include "GameBoard.h"
 #include "MathLib.h"
 
-GameBoard::GameBoard() {
+GameBoard::GameBoard(int newBoardSize) {
 	
 	// 0 values to check if set
 
-	boardSize = 3;
-
-	float boardSqrt = sqrt(boardSize);
-
-	if (floor(boardSize) == boardSize)
-
-	for (int i = 0; i < 9; ++i)
-		possibleNumbers[i] = i;
-
+	boardSize = newBoardSize;
 	populate();
+
+	for (int i = 1; i <= boardSize; ++i)
+		possibleNumbers.push_back(i);
 
 }
 
+void GameBoard::setBlockSize() {
+	 
+	int boardSqrt = sqrt(boardSize);
+
+	if (pow(boardSqrt, 2) == boardSize)
+		blockSize = {boardSqrt, boardSqrt};
+	else 
+		for (int i = boardSize / 2; i > 0; --i)
+			if(boardSize % i == 0)
+				blockSize = {i, boardSize / i};
+
+}
 void GameBoard::populate() {
 
 	std::vector<int> shuffledPossibleNumbers = possibleNumbers;

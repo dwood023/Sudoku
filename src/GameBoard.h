@@ -5,17 +5,21 @@ class GameBoard {
 	 
 	public:
 
-		GameBoard();
+		GameBoard(int newBoardSize);
 
 	private:
 
 		int boardSize;
+
+		std::array<int, 2> blockSize;
 
 		std::vector<std::vector<int>> board;
 
 		std::vector<int> possibleNumbers;
 
 		void populate();
+
+		void setBlockSize();
 
 		bool validPlacement(unsigned int rowIndex, unsigned int columnIndex);
 		bool validBlock(unsigned int rowIndex, unsigned int columnIndex);
