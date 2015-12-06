@@ -2,36 +2,47 @@
 #include <array>
 #include <vector>
 #include <algorithm>
+#include <iostream>
+#include <assert.h>
 #include "GameBoard.h"
 #include "MathLib.h"
 
 GameBoard::GameBoard(int newBoardSize) {
 	
-	// 0 values to check if set
-
 	boardSize = newBoardSize;
-	populate();
 
-	for (int i = 1; i <= boardSize; ++i)
+	std::cout << "before loop\n";
+	for (int i = 1; i <= boardSize; ++i) {
+		std::cout << i << std::endl;
 		possibleNumbers.push_back(i);
+	}
+	assert(boardSize == possibleNumbers.size());
 
+	std::cout << "after loop\n";
+
+	setBlockSize();
+
+	populate();
 }
 
 void GameBoard::setBlockSize() {
 	 
 	int boardSqrt = sqrt(boardSize);
 
-	if (pow(boardSqrt, 2) == boardSize)
+	if ((boardSqrt * boardSqrt) == boardSize)
 		blockSize = {boardSqrt, boardSqrt};
 	else 
 		for (int i = boardSize / 2; i > 0; --i)
 			if(boardSize % i == 0)
 				blockSize = {i, boardSize / i};
+	std::cout << blockSize[0] << std::endl;
 
 }
 void GameBoard::populate() {
 
-	std::vector<int> shuffledPossibleNumbers = possibleNumbers;
+	std::vector<int> shuffledPossibleNumbers(possibleNumbers);
+
+	std::cout << "sad";
 
 
 	for (int row = 0; row < boardSize; ++row) {

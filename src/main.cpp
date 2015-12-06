@@ -4,6 +4,7 @@
 
 int main() {
 	 
+	GameBoard gameBoard(9);
 
 }
 
