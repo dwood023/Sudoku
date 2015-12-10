@@ -4,11 +4,11 @@
 
 namespace MathLib {
 
-	void shuffleVector(std::vector<int> &vectorToShuffle, const int startPoint) {
+	void shuffleVector(std::vector<int> &vectorToShuffle) {
 
-		for (auto i = startPoint; i < vectorToShuffle.size(); i++) {
+		for (auto i = vectorToShuffle.size() - 1; i > 0; --i) {
 
-			unsigned int randIndex = MathLib::randInRange((i), (vectorToShuffle.size() - 1));
+			unsigned int randIndex = MathLib::randInRange(0, i);
 
 			auto buffer = vectorToShuffle[i];
 
@@ -21,7 +21,7 @@ namespace MathLib {
 
 	int randInRange(const int min, const int max) {
 		 
-		return rand() % max + min;
+		return min + (rand() % max - min);
 
 	}
 

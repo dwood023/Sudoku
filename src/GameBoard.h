@@ -21,10 +21,10 @@ class GameBoard {
 
 		void setBlockSize();
 
-		bool validPlacement(unsigned int rowIndex, unsigned int columnIndex);
-		bool validBlock(unsigned int rowIndex, unsigned int columnIndex);
-		bool validColumn(unsigned int columnIndex);
-		bool validRow(unsigned int rowIndex);
+		bool validPlacement(unsigned int xIndex, unsigned int yIndex);
+		bool validBlock(unsigned int xIndex, unsigned int yIndex);
+		bool validy(unsigned int yIndex);
+		bool validx(unsigned int xIndex);
 		bool checkNoDuplicates(std::vector<int> vec2check);
 
 };

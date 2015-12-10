@@ -32,53 +32,69 @@ void GameBoard::setBlockSize() {
 	if ((boardSqrt * boardSqrt) == boardSize)
 		blockSize = {boardSqrt, boardSqrt};
 	else 
-		for (int i = boardSize / 2; i > 0; --i)
-			if(boardSize % i == 0)
+		for (int i = boardSize / 2; i > 0; --i) {
+			 
+			if(boardSize % i == 0) {
 				blockSize = {i, boardSize / i};
+				break;
+			}
+
+		}
 	std::cout << blockSize[0] << std::endl;
+	std::cout << blockSize[1] << std::endl;
 
 }
 void GameBoard::populate() {
 
-	std::vector<int> shuffledPossibleNumbers(possibleNumbers);
+	std::vector<std::vector<int> > numPool;
 
-	std::cout << "sad";
+	for (auto x = 0; x < boardSize; ++x)
+		numPool.push_back(possibleNumbers);
 
+	for (auto block = 0; block < boardSize; ++block) {
+		 
+		int xPosition = block * blockSize[0];
+		int yPosition = 0;
 
-	for (int row = 0; row < boardSize; ++row) {
+		while (xPosition >= boardSize) {
+			xPosition -= boardSize;
+			yPosition += blockSize[1];
+		}
 
-		MathLib::shuffleVector(shuffledPossibleNumbers, 0);
+		for (int y = yPosition; y < yPosition + blockSize[1]; ++y) {
+			for (int x = xPosition; x < xPosition + blockSize[0]; ++x) {
 
-		board[row] = shuffledPossibleNumbers;
-	}
+				numPool[x][y] = block;
 
-	for (int row = 0; row < boardSize; ++row) {
-
-		for (int column = 0; column < boardSize;) {
-
-			if (validBlock(row, column) && validColumn(column))
-				column++;
-			else
-				MathLib::shuffleVector(board[row], column);
-
+				std::cout << x << y << std::endl;
+				 
+			}
 		}
 
 	}
+
+	for (auto y = 0; y < boardSize; ++y) {
+		 
+		std::cout << std::endl;
+		for (auto x = 0; x < boardSize; ++x)
+			std::cout << numPool[x][y] << " ";
+	}
+	
 }
 
-bool GameBoard::validPlacement(unsigned int row, unsigned int column) {
+bool GameBoard::validPlacement(unsigned int x, unsigned int y) {
 	 
-	return validRow(row) && validColumn(column) && validBlock(row, column);
+	return validx(x) && validy(y) && validBlock(x, y);
 
 }
-bool GameBoard::validRow(unsigned int rowIndex) {
+bool GameBoard::validx(unsigned int xIndex) {
 
-	for (int column = 0; column < boardSize; ++column) {
+	for (int y = 0; y < boardSize; ++y) {
 		
-		if (board[rowIndex][column] != 0) {
-			for(int comparisonColumn; comparisonColumn < boardSize; ++comparisonColumn) {
+		if (board[xIndex][y] != 0) {
+			for(int comparisony; comparisony < boardSize; ++comparisony) {
 
-				if (board[rowIndex][column] == board[rowIndex][comparisonColumn] && comparisonColumn != column) {
+				if (board[xIndex][y] == board[xIndex][comparisony] && comparisony != y) {
 					return false;
 				}
 			}
@@ -87,15 +103,15 @@ bool GameBoard::validRow(unsigned int rowIndex) {
 	return true;
 }
 
-bool GameBoard::validColumn(unsigned int columnIndex) {
+bool GameBoard::validy(unsigned int yIndex) {
 
-	for (int row = 0; row < boardSize; ++row) {
+	for (int x = 0; x < boardSize; ++x) {
 		
-		if (board[row][columnIndex] != 0) {
+		if (board[x][yIndex] != 0) {
 
-			for(int comparisonRow; comparisonRow < boardSize; ++comparisonRow) {
+			for(int comparisonx; comparisonx < boardSize; ++comparisonx) {
 
-				if (board[row][columnIndex] == board[comparisonRow][columnIndex] && comparisonRow != row) {
+				if (board[x][yIndex] == board[comparisonx][yIndex] && comparisonx != x) {
 					return false;
 				}
 			}
@@ -104,18 +120,18 @@ bool GameBoard::validColumn(unsigned int columnIndex) {
 	return true;
 }
 
-bool GameBoard::validBlock(unsigned int rowIndex, unsigned int columnIndex) {
+bool GameBoard::validBlock(unsigned int xIndex, unsigned int yIndex) {
 
 
-	int startRow = MathLib::roundDownToMultiple(rowIndex, 3);
-	int startCol = MathLib::roundDownToMultiple(columnIndex, 3);
+	int startx = MathLib::roundDownToMultiple(xIndex, 3);
+	int starty = MathLib::roundDownToMultiple(yIndex, 3);
 
 	std::vector<int> blockNumbers;
 	
-	for (int row = startRow; row < startRow + 3; ++row) {
+	for (int x = startx; x < startx + 3; ++x) {
 		 
-		for (int column = startCol; column < startCol + 3; ++column) 
-			blockNumbers[row + column] = board[row][column];
+		for (int y = starty; y < starty + 3; ++y) 
+			blockNumbers[x + y] = board[x][y];
 	}
 
 	std::sort(blockNumbers.begin(), blockNumbers.end());

@@ -2,7 +2,7 @@
 
 namespace MathLib {
 	
-	void shuffleVector(std::vector<int> &vectorToShuffle, const int startPoint);
+	void shuffleVector(std::vector<int> &vectorToShuffle);
 
 	int randInRange(const int min, const int max);
 
