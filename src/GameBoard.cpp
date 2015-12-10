@@ -46,10 +46,18 @@ void GameBoard::setBlockSize() {
 }
 void GameBoard::populate() {
 
-	std::vector<std::vector<int> > numPool;
+	int randNum;
 
-	for (auto x = 0; x < boardSize; ++x)
-		numPool.push_back(possibleNumbers);
+	std::vector<std::vector<int>> xVec;
+	std::vector<std::vector<int>> yVec;
+	std::vector<std::vector<int>> blockVec;
+
+	for (auto x = 0; x < boardSize; ++x) {
+		xVec.push_back(possibleNumbers);
+		yVec.push_back(possibleNumbers);
+		blockVec.push_back(possibleNumbers);
+		board.push_back(possibleNumbers);
+	}
 
 	for (auto block = 0; block < boardSize; ++block) {
 		 
@@ -62,22 +70,35 @@ void GameBoard::populate() {
 		}
 
 		for (int y = yPosition; y < yPosition + blockSize[1]; ++y) {
-			for (int x = xPosition; x < xPosition + blockSize[0]; ++x) {
+			for (int x = xPosition; x < xPosition + blockSize[0];) {
 
-				numPool[x][y] = block;
+				randNum = MathLib::randInRange(0, boardSize - 1);
+				std::cout << randNum << std::endl;
+				std::cout << "xVec " << xVec[y][randNum] << std::endl;
+				std::cout << "yVec " << yVec[x][randNum] << std::endl;
+				std::cout << "blockVec " << blockVec[block][randNum] << std::endl;
 
-				std::cout << x << y << std::endl;
-				 
+				if (xVec[y][randNum] == randNum + 1 && yVec[x][randNum] == randNum + 1 && blockVec[block][randNum] == randNum + 1) {
+
+						std::cout << "loop " << "x = " << x << " y = " << y << std::endl;
+						board[x][y] = blockVec[block][randNum];
+						blockVec[block][randNum] = 0;
+						xVec[y][randNum] = 0;
+						yVec[x][randNum] = 0;
+
+						++x;
+
+				}
 			}
 		}
-
 	}
+	
 
 	for (auto y = 0; y < boardSize; ++y) {
 		 
 		std::cout << std::endl;
 		for (auto x = 0; x < boardSize; ++x)
-			std::cout << numPool[x][y] << " ";
+			std::cout << board[x][y] << " ";
 	}
 	
 }
