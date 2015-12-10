@@ -1,4 +1,5 @@
 #include <vector>
+#include <random>
 #include <stdlib.h>
 #include "MathLib.h"
 
@@ -19,10 +20,14 @@ namespace MathLib {
 
 	};
 
-	int randInRange(const int min, const int max) {
+	int randInRange(int min, int max) {
 		 
-		return min + (rand() % max - min);
+		std::random_device randDevice;
+		std::mt19937 twister(randDevice());
+		
+		std::uniform_real_distribution<> range(min, max);
 
+		return range(twister); 
 	}
 
 	int roundDownToMultiple(int roundee, int multiple) {
