@@ -4,7 +4,7 @@
 
 int main() {
 	 
-	GameBoard gameBoard(8);
+	GameBoard gameBoard(16);
 
 }
 

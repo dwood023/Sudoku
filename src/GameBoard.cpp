@@ -96,90 +96,22 @@ vector2DInt GameBoard::getNewBoard() {
 	return newBoard;
 }
 
-/*bool GameBoard::validx(unsigned int xIndex) {
-
-	for (int y = 0; y < boardSize; ++y) {
-		
-		if (board[xIndex][y] != 0) {
-			for(int comparisony; comparisony < boardSize; ++comparisony) {
-
-				if (board[xIndex][y] == board[xIndex][comparisony] && comparisony != y) {
-					return false;
-				}
-			}
-		}
-	}
-	return true;
-}
-
-bool GameBoard::validy(unsigned int yIndex) {
-
-	for (int x = 0; x < boardSize; ++x) {
-		
-		if (board[x][yIndex] != 0) {
-
-			for(int comparisonx; comparisonx < boardSize; ++comparisonx) {
-
-				if (board[x][yIndex] == board[comparisonx][yIndex] && comparisonx != x) {
-					return false;
-				}
-			}
-		}
-	}
-	return true;
-}
-
-bool GameBoard::validBlock(unsigned int xIndex, unsigned int yIndex) {
-
-
-	int startx = Utils::roundDownToMultiple(xIndex, 3);
-	int starty = Utils::roundDownToMultiple(yIndex, 3);
-
-	std::vector<int> blockNumbers;
-	
-	for (int x = startx; x < startx + 3; ++x) {
-		 
-		for (int y = starty; y < starty + 3; ++y) 
-			blockNumbers[x + y] = board[x][y];
-	}
-
-	std::sort(blockNumbers.begin(), blockNumbers.end());
-
-	return checkNoDuplicates(blockNumbers);
-
-}
-
-bool GameBoard::checkNoDuplicates(std::vector<int> vec2check) {
-	 
-	std::sort(vec2check.begin(), vec2check.end());
-
-	for (int i = 0; i < 9; ++i) 
-		if (getPossibleNumbers()[i] != vec2check[i] && vec2check[i] != 0)
-			return false;
-
-	return true;
-
-}
-*/
-
 void GameBoard::printBoard(vector2DInt boardToPrint) {
 
 	int size = boardToPrint.size();
 
 	std::cout << std::endl;
 	for (auto y = 0; y < size; ++y) {
-		for (auto x = 0; x < size; ++x)
+		for (auto x = 0; x < size; ++x) {
 			std::cout << boardToPrint[x][y] << " ";
+			if ((((x + 1) % blockSizeY) == 0) && x != size - 1)
+				std::cout << "| ";
+		}
 		std::cout << std::endl;
+		if ((((y + 1) % blockSizeX) == 0) && y != size - 1) {
+			for (int i = 0; i < size + 2; ++i)
+				std::cout << "- ";
+			std::cout << std::endl; 
+		}
 	}
-}
-
-int GameBoard::getBlockSizeY() {
-	 return blockSizeY;
-}
-int GameBoard::getBlockSizeX() {
-	 return blockSizeX;
-}
-int GameBoard::getBoardSize() {
-	 return boardSize;
 }
