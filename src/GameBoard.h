@@ -8,6 +8,9 @@ class GameBoard {
 	public:
 
 		GameBoard(int newBoardSize);
+		int getBlockSizeY();
+		int getBlockSizeX();
+		int getBoardSize();
 
 	private:
 
@@ -22,10 +25,7 @@ class GameBoard {
 
 		void setBlockSize();
 
-		bool populateBlock(vector2DInt &board, int blockNum);
-		std::vector<int> getPossibleNumbers();
-		std::vector<int> getZeroesVector(int size);
-		vector2DInt expandVectorTo2D(std::vector<int> vectorToExpand, int timesToExpand);
+		bool rollBackBlock(vector2DInt &board, int blockNum);
 		bool validPlacement(unsigned int xIndex, unsigned int yIndex);
 		bool validBlock(unsigned int xIndex, unsigned int yIndex);
 		bool validy(unsigned int yIndex);

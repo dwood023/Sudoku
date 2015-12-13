@@ -5,7 +5,7 @@
 #include <iostream>
 #include <assert.h>
 #include "GameBoard.h"
-#include "MathLib.h"
+#include "Utils.h"
 
 GameBoard::GameBoard(int newBoardSize) {
 	
@@ -39,22 +39,19 @@ void GameBoard::setBlockSize() {
 
 vector2DInt GameBoard::getNewBoard() {
 
-	vector2DInt newBoard(boardSize, getZeroesVector(boardSize)),
-				blockPool(boardSize, getPossibleNumbers());
+	vector2DInt newBoard(boardSize, Utils::getZeroesVector(boardSize)),
+				blockPool(boardSize, Utils::getSequence(boardSize, 1));
 	vector2DInt	xPool = blockPool,
 				yPool = blockPool;
 
-	int rand,
-		tries = 0,
-		xStartPos, yStartPos = 0;
-
 	constexpr int maxTries = 40;
+	int blockFailures = 0;
 
 	for (int blockNum = 0; blockNum < boardSize; ++blockNum) {
 		 
-		xStartPos = blockNum * blockSizeX;
-		yStartPos = 0;
-		tries = 0;
+		int xStartPos = blockNum * blockSizeX,
+			yStartPos = 0,
+			tries = 0;
 
 		while (xStartPos >= boardSize) {
 			xStartPos -= boardSize;
@@ -65,10 +62,10 @@ vector2DInt GameBoard::getNewBoard() {
 
 			for (int x = xStartPos; x < xStartPos + blockSizeX && tries <= maxTries; ++tries) {
 
-				rand = MathLib::randInRange(0, boardSize);
-				std::cout << tries << std::endl;
+				int rand = Utils::randInRange(0, boardSize);
+				std::vector<int> poolSelections = { xPool[y][rand], yPool[x][rand], blockPool[blockNum][rand] };
 
-				if (xPool[y][rand] == rand + 1 && yPool[x][rand] == rand + 1 && blockPool[blockNum][rand] == rand + 1) {
+				if (Utils::allEqualValue(poolSelections, rand + 1)) {
 
 					std::cout << "blockNum = " << blockNum << " x = " << x << " y = " << y << std::endl;
 					newBoard[x][y] = blockPool[blockNum][rand];
@@ -81,14 +78,17 @@ vector2DInt GameBoard::getNewBoard() {
 				else if (tries >= maxTries) {
 					for (int y = yStartPos, i = 0; y < yStartPos + blockSizeY; ++y) {
 						for (int x = xStartPos; x < xStartPos + blockSizeX; ++x, ++i) {
-							xPool[y][x] = i + 1;
-							yPool[x][y] = i + 1;
-							blockPool[blockNum][i] = i + 1;
+							int num = newBoard[x][y];
+							blockPool[blockNum][num - 1] = num;
+							xPool[y][num - 1] = num;
+							yPool[x][num - 1] = num;
 						}
 					}
-					std::cout << "trying block " << blockNum << " again" << std::endl;
+					++blockFailures;
 					--blockNum; // Roll back block and try again
 				}
+				if (blockFailures > 7) // 
+					return getNewBoard();
 			}
 		}
 	}
@@ -96,16 +96,7 @@ vector2DInt GameBoard::getNewBoard() {
 	return newBoard;
 }
 
-bool GameBoard::populateBlock(vector2DInt &board, int blockNum) {
-	 
-}
-
-bool GameBoard::validPlacement(unsigned int x, unsigned int y) {
-	 
-	return validx(x) && validy(y) && validBlock(x, y);
-
-}
-bool GameBoard::validx(unsigned int xIndex) {
+/*bool GameBoard::validx(unsigned int xIndex) {
 
 	for (int y = 0; y < boardSize; ++y) {
 		
@@ -141,8 +132,8 @@ bool GameBoard::validy(unsigned int yIndex) {
 bool GameBoard::validBlock(unsigned int xIndex, unsigned int yIndex) {
 
 
-	int startx = MathLib::roundDownToMultiple(xIndex, 3);
-	int starty = MathLib::roundDownToMultiple(yIndex, 3);
+	int startx = Utils::roundDownToMultiple(xIndex, 3);
+	int starty = Utils::roundDownToMultiple(yIndex, 3);
 
 	std::vector<int> blockNumbers;
 	
@@ -169,6 +160,7 @@ bool GameBoard::checkNoDuplicates(std::vector<int> vec2check) {
 	return true;
 
 }
+*/
 
 void GameBoard::printBoard(vector2DInt boardToPrint) {
 
@@ -182,30 +174,12 @@ void GameBoard::printBoard(vector2DInt boardToPrint) {
 	}
 }
 
-std::vector<int> GameBoard::getPossibleNumbers() {
-	std::vector<int> possibleNumbers;
-
-	for (int i = 1; i <= boardSize; ++i)
-		possibleNumbers.push_back(i);
-
-	return possibleNumbers;
+int GameBoard::getBlockSizeY() {
+	 return blockSizeY;
 }
-
-std::vector<int> GameBoard::getZeroesVector(int size) {
-	std::vector<int> zeroesVector;
-	for (int i = 0; i < size; ++i)
-		zeroesVector.push_back(0);
-	return zeroesVector;
+int GameBoard::getBlockSizeX() {
+	 return blockSizeX;
 }
-
-vector2DInt GameBoard::expandVectorTo2D(std::vector<int> vectorToExpand, int timesToExpand) {
-	 
-	vector2DInt expandedVector;
-
-	for (auto x = 0; x < timesToExpand; ++x) {
-		expandedVector.push_back(vectorToExpand);
-	}
-
-	return expandedVector;
-
+int GameBoard::getBoardSize() {
+	 return boardSize;
 }
