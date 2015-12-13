@@ -3,8 +3,8 @@
 *.ko
 *.obj
 *.elf
-/bin
-/obj
+bin/
+obj/
 .*.sw*
 
 # Precompiled Headers
