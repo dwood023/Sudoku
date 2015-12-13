@@ -3,8 +3,8 @@
 
 
 int main() {
-	 
-	GameBoard gameBoard(16);
+	
+	GameBoard gameBoard(9);
 
 }
 
