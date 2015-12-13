@@ -1,30 +1,36 @@
 #include <array>
 #include <vector> 
 
+typedef std::vector<std::vector<int>> vector2DInt;
+
 class GameBoard {
 	 
 	public:
 
 		GameBoard(int newBoardSize);
+		int getBlockSizeY();
+		int getBlockSizeX();
+		int getBoardSize();
 
 	private:
 
 		int boardSize;
 
-		std::array<int, 2> blockSize;
+		int blockSizeX;
+		int blockSizeY;
 
-		std::vector<std::vector<int>> board;
+		vector2DInt board;
 
-		std::vector<int> possibleNumbers;
-
-		void populate();
+		vector2DInt getNewBoard();
 
 		void setBlockSize();
 
-		bool validPlacement(unsigned int rowIndex, unsigned int columnIndex);
-		bool validBlock(unsigned int rowIndex, unsigned int columnIndex);
-		bool validColumn(unsigned int columnIndex);
-		bool validRow(unsigned int rowIndex);
+		bool rollBackBlock(vector2DInt &board, int blockNum);
+		bool validPlacement(unsigned int xIndex, unsigned int yIndex);
+		bool validBlock(unsigned int xIndex, unsigned int yIndex);
+		bool validy(unsigned int yIndex);
+		bool validx(unsigned int xIndex);
 		bool checkNoDuplicates(std::vector<int> vec2check);
+		void printBoard(vector2DInt board);
 
 };

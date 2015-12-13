@@ -31,3 +31,6 @@ uninstall:
 
 run:
 	./bin/$(EXECUTABLE)
+
+debug:
+	gdb -tui ./bin/$(EXECUTABLE)

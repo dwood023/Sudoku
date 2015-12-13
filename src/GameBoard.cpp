@@ -5,133 +5,113 @@
 #include <iostream>
 #include <assert.h>
 #include "GameBoard.h"
-#include "MathLib.h"
+#include "Utils.h"
 
 GameBoard::GameBoard(int newBoardSize) {
 	
 	boardSize = newBoardSize;
 
-	std::cout << "before loop\n";
-	for (int i = 1; i <= boardSize; ++i) {
-		std::cout << i << std::endl;
-		possibleNumbers.push_back(i);
-	}
-	assert(boardSize == possibleNumbers.size());
-
-	std::cout << "after loop\n";
-
 	setBlockSize();
 
-	populate();
+	board = getNewBoard();
 }
 
 void GameBoard::setBlockSize() {
 	 
 	int boardSqrt = sqrt(boardSize);
 
-	if ((boardSqrt * boardSqrt) == boardSize)
-		blockSize = {boardSqrt, boardSqrt};
+	if ((boardSqrt * boardSqrt) == boardSize) {
+		blockSizeX = boardSqrt;
+		blockSizeY = boardSqrt;
+	}
 	else 
-		for (int i = boardSize / 2; i > 0; --i)
-			if(boardSize % i == 0)
-				blockSize = {i, boardSize / i};
-	std::cout << blockSize[0] << std::endl;
-
-}
-void GameBoard::populate() {
-
-	std::vector<int> shuffledPossibleNumbers(possibleNumbers);
-
-	std::cout << "sad";
-
-
-	for (int row = 0; row < boardSize; ++row) {
-
-		MathLib::shuffleVector(shuffledPossibleNumbers, 0);
-
-		board[row] = shuffledPossibleNumbers;
-	}
-
-	for (int row = 0; row < boardSize; ++row) {
-
-		for (int column = 0; column < boardSize;) {
-
-			if (validBlock(row, column) && validColumn(column))
-				column++;
-			else
-				MathLib::shuffleVector(board[row], column);
-
-		}
-
-	}
-}
-
-bool GameBoard::validPlacement(unsigned int row, unsigned int column) {
-	 
-	return validRow(row) && validColumn(column) && validBlock(row, column);
-
-}
-bool GameBoard::validRow(unsigned int rowIndex) {
-
-	for (int column = 0; column < boardSize; ++column) {
-		
-		if (board[rowIndex][column] != 0) {
-			for(int comparisonColumn; comparisonColumn < boardSize; ++comparisonColumn) {
-
-				if (board[rowIndex][column] == board[rowIndex][comparisonColumn] && comparisonColumn != column) {
-					return false;
-				}
+		for (int i = boardSize / 2; i > 0; --i) {
+			if(boardSize % i == 0) {
+				blockSizeX = i;
+				blockSizeY = boardSize / i;
+				break;
 			}
 		}
-	}
-	return true;
+	std::cout << blockSizeX << std::endl;
+	std::cout << blockSizeY << std::endl;
+
 }
 
-bool GameBoard::validColumn(unsigned int columnIndex) {
+vector2DInt GameBoard::getNewBoard() {
 
-	for (int row = 0; row < boardSize; ++row) {
-		
-		if (board[row][columnIndex] != 0) {
+	vector2DInt newBoard(boardSize, Utils::getZeroesVector(boardSize)),
+				blockPool(boardSize, Utils::getSequence(boardSize, 1));
+	vector2DInt	xPool = blockPool,
+				yPool = blockPool;
 
-			for(int comparisonRow; comparisonRow < boardSize; ++comparisonRow) {
+	constexpr int maxTries = 40;
+	int blockFailures = 0;
 
-				if (board[row][columnIndex] == board[comparisonRow][columnIndex] && comparisonRow != row) {
-					return false;
-				}
-			}
-		}
-	}
-	return true;
-}
-
-bool GameBoard::validBlock(unsigned int rowIndex, unsigned int columnIndex) {
-
-
-	int startRow = MathLib::roundDownToMultiple(rowIndex, 3);
-	int startCol = MathLib::roundDownToMultiple(columnIndex, 3);
-
-	std::vector<int> blockNumbers;
-	
-	for (int row = startRow; row < startRow + 3; ++row) {
+	for (int blockNum = 0; blockNum < boardSize; ++blockNum) {
 		 
-		for (int column = startCol; column < startCol + 3; ++column) 
-			blockNumbers[row + column] = board[row][column];
+		int xStartPos = blockNum * blockSizeX,
+			yStartPos = 0,
+			tries = 0;
+
+		while (xStartPos >= boardSize) {
+			xStartPos -= boardSize;
+			yStartPos += blockSizeY;
+		}
+
+		for (int y = yStartPos; y < yStartPos + blockSizeY && tries <= maxTries; ++y) {
+
+			for (int x = xStartPos; x < xStartPos + blockSizeX && tries <= maxTries; ++tries) {
+
+				int rand = Utils::randInRange(0, boardSize);
+				std::vector<int> poolSelections = { xPool[y][rand], yPool[x][rand], blockPool[blockNum][rand] };
+
+				if (Utils::allEqualValue(poolSelections, rand + 1)) {
+
+					std::cout << "blockNum = " << blockNum << " x = " << x << " y = " << y << std::endl;
+					newBoard[x][y] = blockPool[blockNum][rand];
+					blockPool[blockNum][rand] = 0, xPool[y][rand] = 0, yPool[x][rand] = 0, tries = 0;
+					++x;
+
+					printBoard(newBoard);
+					
+				}
+				else if (tries >= maxTries) {
+					for (int y = yStartPos, i = 0; y < yStartPos + blockSizeY; ++y) {
+						for (int x = xStartPos; x < xStartPos + blockSizeX; ++x, ++i) {
+							int num = newBoard[x][y];
+							blockPool[blockNum][num - 1] = num;
+							xPool[y][num - 1] = num;
+							yPool[x][num - 1] = num;
+						}
+					}
+					++blockFailures;
+					--blockNum; // Roll back block and try again
+				}
+				if (blockFailures > 7) // 
+					return getNewBoard();
+			}
+		}
 	}
 
-	std::sort(blockNumbers.begin(), blockNumbers.end());
-
-	return checkNoDuplicates(blockNumbers);
-
+	return newBoard;
 }
 
-bool GameBoard::checkNoDuplicates(std::vector<int> vec2check) {
-	 
-	std::sort(vec2check.begin(), vec2check.end());
+void GameBoard::printBoard(vector2DInt boardToPrint) {
 
-	for (int i = 0; i < 9; ++i) 
-		if (possibleNumbers[i] != vec2check[i] && vec2check[i] != 0)
-			return false;
+	int size = boardToPrint.size();
 
-	return true;
-
+	std::cout << std::endl;
+	for (auto y = 0; y < size; ++y) {
+		for (auto x = 0; x < size; ++x) {
+			std::cout << boardToPrint[x][y] << " ";
+			if ((((x + 1) % blockSizeY) == 0) && x != size - 1)
+				std::cout << "| ";
+		}
+		std::cout << std::endl;
+		if ((((y + 1) % blockSizeX) == 0) && y != size - 1) {
+			for (int i = 0; i < size + 2; ++i)
+				std::cout << "- ";
+			std::cout << std::endl; 
+		}
+	}
 }
