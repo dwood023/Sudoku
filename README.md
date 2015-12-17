@@ -6,17 +6,14 @@ the boards length.
 Generation avoids validating every placement by placing numbers from a managed available
 pool for each row, column and block.
 
-TODO -- 
+###TODO
 
-- Generation is currently pretty slow despite not validating every cell - the architecture needs abstracting to increase efficiency and readability
+- Generation is faster than it used to be (~1sec for <11 size), but still can't deal with sizes >11, it may be the inherent complexity of the probable is prohibative of large boards, or there may still be significant improvements to make this possible
 
 - Remove numbers to start game
 
 - Presentation
 
-- With large boards (12+ size), generation is still possible, but currently very unlikely within any
-  reasonable period of time, when generation gets stuck many times in a row, it currently restarts
-  the whole board, ideally, as much of the board will be kept as possible in future.
 
 
 
