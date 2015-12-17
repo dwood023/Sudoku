@@ -5,6 +5,7 @@
 #include <iostream>
 #include <assert.h>
 #include "GameBoard.h"
+#include "GameGenerator.h"
 #include "Utils.h"
 
 GameBoard::GameBoard(int newBoardSize) {
@@ -14,6 +15,8 @@ GameBoard::GameBoard(int newBoardSize) {
 	setBlockSize();
 
 	board = getNewBoard();
+
+	printBoard(board);
 }
 
 void GameBoard::setBlockSize() {
@@ -25,75 +28,19 @@ void GameBoard::setBlockSize() {
 		blockSizeY = boardSqrt;
 	}
 	else 
-		for (int i = boardSize / 2; i > 0; --i) {
+		for (int i = boardSize / 2; i > 0; --i)
 			if(boardSize % i == 0) {
 				blockSizeX = i;
 				blockSizeY = boardSize / i;
 				break;
 			}
-		}
-	std::cout << blockSizeX << std::endl;
-	std::cout << blockSizeY << std::endl;
-
 }
 
 vector2DInt GameBoard::getNewBoard() {
 
-	vector2DInt newBoard(boardSize, Utils::getZeroesVector(boardSize)),
-				blockPool(boardSize, Utils::getSequence(boardSize, 1));
-	vector2DInt	xPool = blockPool,
-				yPool = blockPool;
+	GameGenerator gameGen(*this);
 
-	constexpr int maxTries = 40;
-	int blockFailures = 0;
-
-	for (int blockNum = 0; blockNum < boardSize; ++blockNum) {
-		 
-		int xStartPos = blockNum * blockSizeX,
-			yStartPos = 0,
-			tries = 0;
-
-		while (xStartPos >= boardSize) {
-			xStartPos -= boardSize;
-			yStartPos += blockSizeY;
-		}
-
-		for (int y = yStartPos; y < yStartPos + blockSizeY && tries <= maxTries; ++y) {
-
-			for (int x = xStartPos; x < xStartPos + blockSizeX && tries <= maxTries; ++tries) {
-
-				int rand = Utils::randInRange(0, boardSize);
-				std::vector<int> poolSelections = { xPool[y][rand], yPool[x][rand], blockPool[blockNum][rand] };
-
-				if (Utils::allEqualValue(poolSelections, rand + 1)) {
-
-					std::cout << "blockNum = " << blockNum << " x = " << x << " y = " << y << std::endl;
-					newBoard[x][y] = blockPool[blockNum][rand];
-					blockPool[blockNum][rand] = 0, xPool[y][rand] = 0, yPool[x][rand] = 0, tries = 0;
-					++x;
-
-					printBoard(newBoard);
-					
-				}
-				else if (tries >= maxTries) {
-					for (int y = yStartPos, i = 0; y < yStartPos + blockSizeY; ++y) {
-						for (int x = xStartPos; x < xStartPos + blockSizeX; ++x, ++i) {
-							int num = newBoard[x][y];
-							blockPool[blockNum][num - 1] = num;
-							xPool[y][num - 1] = num;
-							yPool[x][num - 1] = num;
-						}
-					}
-					++blockFailures;
-					--blockNum; // Roll back block and try again
-				}
-				if (blockFailures > 7) // 
-					return getNewBoard();
-			}
-		}
-	}
-
-	return newBoard;
+	return gameGen.getBoard();
 }
 
 void GameBoard::printBoard(vector2DInt boardToPrint) {
@@ -115,3 +62,7 @@ void GameBoard::printBoard(vector2DInt boardToPrint) {
 		}
 	}
 }
+
+int GameBoard::getBoardSize() { return boardSize; }
+int GameBoard::getBlockSizeX() { return blockSizeX; }
+int GameBoard::getBlockSizeY() { return blockSizeY; }

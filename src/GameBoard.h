@@ -1,3 +1,5 @@
+#ifndef GAME_BOARD_H
+#define GAME_BOARD_H
 #include <array>
 #include <vector> 
 
@@ -11,6 +13,7 @@ class GameBoard {
 		int getBlockSizeY();
 		int getBlockSizeX();
 		int getBoardSize();
+		void printBoard(vector2DInt board);
 
 	private:
 
@@ -31,6 +34,6 @@ class GameBoard {
 		bool validy(unsigned int yIndex);
 		bool validx(unsigned int xIndex);
 		bool checkNoDuplicates(std::vector<int> vec2check);
-		void printBoard(vector2DInt board);
 
 };
+#endif
