@@ -8,7 +8,7 @@ pool for each row, column and block.
 
 ###TODO
 
-- Generation is faster than it used to be (~1sec for <11 size), but still can't deal with sizes >11, it may be the inherent complexity of problem is prohibative of large boards, or there may still be significant improvements to make this possible
+- Generation is faster than it used to be (~1sec for <11 size), but still can't deal with sizes >11, it may be the inherent complexity of the problem is prohibative of large boards, or there may still be significant improvements to make this possible
 
 - Remove numbers to start game
 
