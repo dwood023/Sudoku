@@ -5,7 +5,8 @@
 
 int main() {
 	
-	GameBoard gameBoard(11);
+	GameBoard gameBoard(9, 50);
+
 
 }
 

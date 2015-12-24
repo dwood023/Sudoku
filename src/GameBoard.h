@@ -9,7 +9,7 @@ class GameBoard {
 	 
 	public:
 
-		GameBoard(int newBoardSize);
+		GameBoard(int newBoardSize, int difficulty);
 		int getBlockSizeY();
 		int getBlockSizeX();
 		int getBoardSize();
@@ -23,6 +23,7 @@ class GameBoard {
 		vector2DInt board;
 
 		vector2DInt getNewBoard();
+		void beginGame(int difficulty);
 		inline void setBlockSize();
 		bool validBoard();
 		bool validBlock(int blockNum);

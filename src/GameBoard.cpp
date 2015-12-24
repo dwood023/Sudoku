@@ -6,14 +6,16 @@
 #include "GameGenerator.h"
 #include "Utils.h"
 
-GameBoard::GameBoard(int newBoardSize) 
+GameBoard::GameBoard(int newBoardSize, int difficulty) 
 : boardSize(newBoardSize)
 {
-	
-
 	setBlockSize();
 
 	board = getNewBoard();
+
+	printBoard(board);
+
+	beginGame(difficulty);
 
 	printBoard(board);
 }
@@ -62,6 +64,19 @@ void GameBoard::printBoard(vector2DInt boardToPrint) {
 	}
 }
 
+void GameBoard::beginGame(int difficulty) {
+
+	for (int i = 0; i < difficulty; ++i) {
+		 
+		int randX = Utils::randInRange(0, boardSize);
+		int randY = Utils::randInRange(0, boardSize);
+
+		board[randX][randY] = 0;
+
+	}
+	 
+}
+
 bool GameBoard::validBoard() {
 	for (int i = 0; i < boardSize; ++i)
 		if (!validBlock(i) || !validY(i) || !validX(i)) return false;
@@ -81,8 +96,12 @@ bool GameBoard::validBlock(int blockNum) {
 		std::set<int> blockSet;
 
 		for (int y = yStartPos; y < yStartPos + blockSizeY; ++y) 
-			for (int x = xStartPos; x < xStartPos + blockSizeX; ++x) 
-				blockSet.insert(board[x][y]);
+			for (int x = xStartPos; x < xStartPos + blockSizeX; ++x) {
+				if (board[x][y] == 0)
+					return false;
+				else
+					blockSet.insert(board[x][y]);
+			}
 
 		return (blockSet.size() == boardSize);
 }
