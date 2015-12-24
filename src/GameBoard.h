@@ -18,22 +18,16 @@ class GameBoard {
 	private:
 
 		int boardSize;
-
 		int blockSizeX;
 		int blockSizeY;
-
 		vector2DInt board;
 
 		vector2DInt getNewBoard();
-
-		void setBlockSize();
-
-		bool rollBackBlock(vector2DInt &board, int blockNum);
-		bool validPlacement(unsigned int xIndex, unsigned int yIndex);
-		bool validBlock(unsigned int xIndex, unsigned int yIndex);
-		bool validy(unsigned int yIndex);
-		bool validx(unsigned int xIndex);
-		bool checkNoDuplicates(std::vector<int> vec2check);
+		inline void setBlockSize();
+		bool validBoard();
+		bool validBlock(int blockNum);
+		bool validY(int yNum);
+		bool validX(int xNum);
 
 };
 #endif

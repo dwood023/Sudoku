@@ -57,5 +57,17 @@ namespace Utils {
 		 return zeroesVector;
 	}
 
+	unsigned int factorial(int num) {
+		if (num == 1) return num;
+		else return num * factorial(num - 1);
+	}
+
+	unsigned int getVectorProduct(const std::vector<int> vector) {
+		int product = 1;
+		for (int element : vector)
+			product *= element;
+		return product;
+	}
+
 }
 

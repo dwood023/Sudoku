@@ -1,16 +1,15 @@
 #include <math.h>
-#include <array>
 #include <vector>
-#include <algorithm>
 #include <iostream>
-#include <assert.h>
+#include <set>
 #include "GameBoard.h"
 #include "GameGenerator.h"
 #include "Utils.h"
 
-GameBoard::GameBoard(int newBoardSize) {
+GameBoard::GameBoard(int newBoardSize) 
+: boardSize(newBoardSize)
+{
 	
-	boardSize = newBoardSize;
 
 	setBlockSize();
 
@@ -19,7 +18,7 @@ GameBoard::GameBoard(int newBoardSize) {
 	printBoard(board);
 }
 
-void GameBoard::setBlockSize() {
+inline void GameBoard::setBlockSize() {
 	 
 	int boardSqrt = sqrt(boardSize);
 
@@ -61,6 +60,44 @@ void GameBoard::printBoard(vector2DInt boardToPrint) {
 			std::cout << std::endl; 
 		}
 	}
+}
+
+bool GameBoard::validBoard() {
+	for (int i = 0; i < boardSize; ++i)
+		if (!validBlock(i) || !validY(i) || !validX(i)) return false;
+	return true;
+}
+
+bool GameBoard::validBlock(int blockNum) {
+
+		int xStartPos = blockNum * blockSizeX,
+			yStartPos = 0;
+
+		while (xStartPos >= boardSize) {
+			xStartPos -= boardSize;
+			yStartPos += blockSizeY;
+		}
+
+		std::set<int> blockSet;
+
+		for (int y = yStartPos; y < yStartPos + blockSizeY; ++y) 
+			for (int x = xStartPos; x < xStartPos + blockSizeX; ++x) 
+				blockSet.insert(board[x][y]);
+
+		return (blockSet.size() == boardSize);
+}
+
+bool GameBoard::validX(int xNum) {
+	std::set<int> xSet(board[xNum].begin(), board[xNum].end());
+	return (xSet.size() == boardSize);
+}
+
+bool GameBoard::validY(int yNum) {
+	std::set<int> ySet;
+	for (int x = 0; x < boardSize; ++x)
+		ySet.insert(board[x][yNum]);
+	 
+	return (ySet.size() == boardSize);
 }
 
 int GameBoard::getBoardSize() { return boardSize; }

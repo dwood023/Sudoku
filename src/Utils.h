@@ -14,5 +14,8 @@ namespace Utils {
 
 	std::vector<int> getZeroesVector(int size);
 
+	unsigned int factorial(int num);
+	unsigned int getVectorProduct(const std::vector<int> vector);
+
 };
 
